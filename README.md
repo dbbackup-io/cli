@@ -1,2 +1,2 @@
 # cli
-DBBackup CLI to backup your database on local, S3 or DBBackup.
+DBBackup CLI to back up your database on local, S3 or DBBackup.
