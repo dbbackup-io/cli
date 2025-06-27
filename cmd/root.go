@@ -20,11 +20,13 @@ import (
 var (
 	logLevel      string
 	logsTableView bool
+	version       = "dev"
 )
 
 var rootCmd = &cobra.Command{
-	Use:   "dbbackup",
-	Short: "Database backup and restore CLI tool",
+	Use:     "dbbackup",
+	Short:   "Database backup and restore CLI tool",
+	Version: version,
 	Long: `A CLI tool to backup and restore databases to/from cloud storage.
 Supports PostgreSQL, MySQL, MongoDB, Redis with S3, GCS, and Azure storage.`,
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
@@ -61,6 +63,12 @@ var logsCmd = &cobra.Command{
 		job.JobCmd.SetArgs(jobArgs)
 		job.JobCmd.Execute()
 	},
+}
+
+// SetVersion sets the version for the CLI
+func SetVersion(v string) {
+	version = v
+	rootCmd.Version = v
 }
 
 func Execute() {
