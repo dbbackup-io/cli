@@ -47,12 +47,23 @@ func (be *BackupExecutor) Execute(ctx context.Context) error {
 	if err != nil {
 		return err
 	}
-	defer reader.Close()
+
+	var closeErr error
+	defer func() {
+		if err := reader.Close(); err != nil {
+			closeErr = err
+		}
+	}()
 
 	// Upload to storage
 	size, err := be.Uploader.Upload(ctx, fullPath, reader)
 	if err != nil {
 		return err
+	}
+
+	// Check if the backup command itself failed
+	if closeErr != nil {
+		return closeErr
 	}
 
 	// Log success
