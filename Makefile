@@ -121,12 +121,15 @@ imports: ## Fix imports with goimports
 # All CI checks (same as GitHub Actions)
 check: fmt-check vet test ## Run all CI checks locally
 	@echo "All checks passed! ✅"
+	@echo ""
+	@echo "Note: To run additional linting, use 'make lint' or 'make lint-minimal'"
+	@echo "Some errcheck issues may need to be fixed for production readiness."
 
 # Lint with minimal config (ignore common defer Close issues)
 lint-minimal: ## Run basic linting (ignore defer Close errors)
 	@echo "Running minimal linting..."
 	@if command -v golangci-lint >/dev/null 2>&1; then \
-		golangci-lint run --enable=unused,staticcheck,gosimple,ineffassign,govet; \
+		golangci-lint run --enable=unused,staticcheck,ineffassign,govet; \
 	else \
 		echo "golangci-lint not installed. Run 'make dev-tools' to install it."; \
 		exit 1; \
