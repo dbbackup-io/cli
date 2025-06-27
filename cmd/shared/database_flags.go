@@ -19,7 +19,7 @@ func AddPostgreSQLFlags(cmd *cobra.Command, flags *DatabaseFlags) {
 	cmd.Flags().StringVar(&flags.Username, "db-user", "", "Database username")
 	cmd.Flags().StringVar(&flags.Password, "db-password", "", "Database password")
 
-	cmd.MarkFlagRequired("db-name")
+	_ = cmd.MarkFlagRequired("db-name")
 }
 
 // AddMySQLFlags adds MySQL-specific flags to a command
@@ -30,7 +30,7 @@ func AddMySQLFlags(cmd *cobra.Command, flags *DatabaseFlags) {
 	cmd.Flags().StringVar(&flags.Username, "db-user", "", "Database username")
 	cmd.Flags().StringVar(&flags.Password, "db-password", "", "Database password")
 
-	cmd.MarkFlagRequired("db-name")
+	_ = cmd.MarkFlagRequired("db-name")
 }
 
 // AddMongoDBFlags adds MongoDB-specific flags to a command
@@ -58,7 +58,7 @@ func AddPostgreSQLRestoreFlags(cmd *cobra.Command) {
 	cmd.Flags().String("target-password", "", "Target database password")
 	cmd.Flags().String("backup-file", "", "Backup file path/key to restore (required)")
 
-	cmd.MarkFlagRequired("target-db")
+	_ = cmd.MarkFlagRequired("target-db")
 	cmd.MarkFlagRequired("backup-file")
 }
 
@@ -70,7 +70,7 @@ func AddMySQLRestoreFlags(cmd *cobra.Command) {
 	cmd.Flags().String("target-password", "", "Target database password")
 	cmd.Flags().String("backup-file", "", "Backup file path/key to restore (required)")
 
-	cmd.MarkFlagRequired("target-db")
+	_ = cmd.MarkFlagRequired("target-db")
 	cmd.MarkFlagRequired("backup-file")
 }
 

@@ -18,9 +18,8 @@ import (
 )
 
 var (
-	logLevel      string
-	logsTableView bool
-	version       = "dev"
+	logLevel string
+	version  = "dev"
 )
 
 var rootCmd = &cobra.Command{

@@ -20,7 +20,7 @@ func (u *Uploader) Upload(ctx context.Context, key string, reader io.Reader) (in
 
 	// Create the full file path
 	filePath := filepath.Join(u.Directory, key)
-	
+
 	// Ensure parent directories exist
 	parentDir := filepath.Dir(filePath)
 	if err := os.MkdirAll(parentDir, 0755); err != nil {
@@ -51,7 +51,7 @@ func (u *Uploader) GetStorageType() string {
 // Download downloads a file from local storage to a writer
 func (u *Uploader) Download(ctx context.Context, key string, writer io.Writer) error {
 	filePath := filepath.Join(u.Directory, key)
-	
+
 	// Check if file exists
 	if _, err := os.Stat(filePath); os.IsNotExist(err) {
 		return fmt.Errorf("backup file not found: %s", filePath)
@@ -81,12 +81,12 @@ func (u *Uploader) GetFilePath(key string) string {
 // ListBackups lists all backup files in the directory
 func (u *Uploader) ListBackups() ([]string, error) {
 	var backups []string
-	
+
 	err := filepath.Walk(u.Directory, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
 			return err
 		}
-		
+
 		if !info.IsDir() {
 			// Get relative path from directory
 			relPath, err := filepath.Rel(u.Directory, path)
@@ -97,10 +97,10 @@ func (u *Uploader) ListBackups() ([]string, error) {
 		}
 		return nil
 	})
-	
+
 	if err != nil {
 		return nil, fmt.Errorf("failed to list backups in %s: %w", u.Directory, err)
 	}
-	
+
 	return backups, nil
 }

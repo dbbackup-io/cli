@@ -28,32 +28,32 @@ func init() {
 
 func runList(cmd *cobra.Command, args []string) {
 	logger.Debug("Starting storage destinations list")
-	
+
 	// Create API client
 	client, err := api.NewClient()
 	if err != nil {
 		logger.Errorf("Failed to create API client: %v", err)
 		return
 	}
-	
+
 	// Get storage destinations
 	destinations, err := client.GetStorageDestinations()
 	if err != nil {
 		logger.Errorf("Failed to retrieve storage destinations: %v", err)
 		return
 	}
-	
+
 	if len(destinations) == 0 {
 		logger.Info("No storage destinations found")
 		return
 	}
-	
+
 	// Show table view if requested
 	if tableView {
 		displayDestinationsTable(destinations)
 		return
 	}
-	
+
 	// Interactive selection
 	if err := selectAndDisplayDestination(client, destinations); err != nil {
 		logger.Debugf("Interactive selection failed: %v", err)
@@ -67,7 +67,7 @@ func runList(cmd *cobra.Command, args []string) {
 func displayDestinationsTable(destinations []api.StorageDestination) {
 	fmt.Printf("%-5s %-10s %-15s %-25s %-20s %-9s %-15s\n", "ID", "DRIVER", "REGION", "BUCKET", "PREFIX", "DEFAULT", "CREATED")
 	fmt.Println(strings.Repeat("-", 100))
-	
+
 	for _, dest := range destinations {
 		id := fmt.Sprintf("%d", dest.ID)
 		driver := truncateString(dest.Driver, 10)
@@ -85,11 +85,11 @@ func displayDestinationsTable(destinations []api.StorageDestination) {
 			isDefault = "Yes"
 		}
 		created := dest.CreatedAt.Format("2006-01-02 15:04")
-		
-		fmt.Printf("%-5s %-10s %-15s %-25s %-20s %-9s %-15s\n", 
+
+		fmt.Printf("%-5s %-10s %-15s %-25s %-20s %-9s %-15s\n",
 			id, driver, region, bucket, prefix, isDefault, created)
 	}
-	
+
 	logger.Infof("Found %d storage destinations", len(destinations))
 }
 
@@ -103,16 +103,16 @@ func selectAndDisplayDestination(client *api.Client, destinations []api.StorageD
 		if dest.IsDefault {
 			status = "⭐"
 		}
-		
+
 		bucketInfo := dest.Bucket
 		if dest.Region != nil {
 			bucketInfo += " (" + *dest.Region + ")"
 		}
-		
+
 		display := fmt.Sprintf("%s %s - %s", status, dest.Driver, bucketInfo)
 		options = append(options, huh.NewOption(display, dest.ID))
 	}
-	
+
 	// Add option to view all in table
 	options = append(options, huh.NewOption("📋 View all storage destinations in table format", -1))
 
@@ -153,36 +153,36 @@ func displayDestinationDetails(dest *api.StorageDestination) {
 	fmt.Println()
 	fmt.Printf("📦 Storage Destination Details\n")
 	fmt.Println(strings.Repeat("=", 50))
-	
+
 	fmt.Printf("ID:                  %d\n", dest.ID)
 	fmt.Printf("Driver:              %s\n", dest.Driver)
 	fmt.Printf("Bucket:              %s\n", dest.Bucket)
-	
+
 	if dest.Region != nil {
 		fmt.Printf("Region:              %s\n", *dest.Region)
 	} else {
 		fmt.Printf("Region:              Not specified\n")
 	}
-	
+
 	if dest.PathPrefix != nil && *dest.PathPrefix != "" {
 		fmt.Printf("Path Prefix:         %s\n", *dest.PathPrefix)
 	} else {
 		fmt.Printf("Path Prefix:         Not specified\n")
 	}
-	
+
 	fmt.Printf("Is Default:          %t\n", dest.IsDefault)
-	
+
 	if dest.ConfigJSON != nil && *dest.ConfigJSON != "" {
 		fmt.Printf("Configuration:       %s\n", "[CUSTOM CONFIG]")
 	}
-	
+
 	fmt.Printf("Team ID:             %d\n", dest.TeamID)
 	fmt.Printf("Workspace ID:        %d\n", dest.WorkspaceID)
-	
+
 	if dest.Tags != nil && *dest.Tags != "" {
 		fmt.Printf("Tags:                %s\n", *dest.Tags)
 	}
-	
+
 	fmt.Printf("Created:             %s\n", dest.CreatedAt.Format("2006-01-02 15:04:05"))
 	fmt.Printf("Updated:             %s\n", dest.UpdatedAt.Format("2006-01-02 15:04:05"))
 	fmt.Println()

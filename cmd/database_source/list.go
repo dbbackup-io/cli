@@ -28,32 +28,32 @@ func init() {
 
 func runList(cmd *cobra.Command, args []string) {
 	logger.Debug("Starting database sources list")
-	
+
 	// Create API client
 	client, err := api.NewClient()
 	if err != nil {
 		logger.Errorf("Failed to create API client: %v", err)
 		return
 	}
-	
+
 	// Get database sources
 	sources, err := client.GetDatabaseSources()
 	if err != nil {
 		logger.Errorf("Failed to retrieve database sources: %v", err)
 		return
 	}
-	
+
 	if len(sources) == 0 {
 		logger.Info("No database sources found")
 		return
 	}
-	
+
 	// Show table view if requested
 	if tableView {
 		displaySourcesTable(sources)
 		return
 	}
-	
+
 	// Interactive selection
 	if err := selectAndDisplaySource(client, sources); err != nil {
 		logger.Debugf("Interactive selection failed: %v", err)
@@ -67,7 +67,7 @@ func runList(cmd *cobra.Command, args []string) {
 func displaySourcesTable(sources []api.DatabaseSource) {
 	fmt.Printf("%-5s %-20s %-12s %-20s %-6s %-10s %-15s\n", "ID", "ENGINE", "HOST", "DATABASE", "PORT", "STATUS", "CREATED")
 	fmt.Println(strings.Repeat("-", 88))
-	
+
 	for _, source := range sources {
 		id := fmt.Sprintf("%d", source.ID)
 		engine := truncateString(source.Engine, 12)
@@ -79,11 +79,11 @@ func displaySourcesTable(sources []api.DatabaseSource) {
 		port := fmt.Sprintf("%d", source.Port)
 		status := truncateString(source.Status, 10)
 		created := source.CreatedAt.Format("2006-01-02 15:04")
-		
-		fmt.Printf("%-5s %-20s %-12s %-20s %-6s %-10s %-15s\n", 
+
+		fmt.Printf("%-5s %-20s %-12s %-20s %-6s %-10s %-15s\n",
 			id, engine, host, dbName, port, status, created)
 	}
-	
+
 	logger.Infof("Found %d database sources", len(sources))
 }
 
@@ -99,16 +99,16 @@ func selectAndDisplaySource(client *api.Client, sources []api.DatabaseSource) er
 		} else if source.Status != "active" {
 			status = "🟡"
 		}
-		
+
 		dbInfo := fmt.Sprintf("%s:%d", source.Host, source.Port)
 		if source.DBName != nil {
 			dbInfo += "/" + *source.DBName
 		}
-		
+
 		display := fmt.Sprintf("%s %s (%s) - %s", status, source.Engine, source.Status, dbInfo)
 		options = append(options, huh.NewOption(display, source.ID))
 	}
-	
+
 	// Add option to view all in table
 	options = append(options, huh.NewOption("📋 View all database sources in table format", -1))
 
@@ -149,42 +149,42 @@ func displaySourceDetails(source *api.DatabaseSource) {
 	fmt.Println()
 	fmt.Printf("🗄️  Database Source Details\n")
 	fmt.Println(strings.Repeat("=", 50))
-	
+
 	fmt.Printf("ID:                  %d\n", source.ID)
 	fmt.Printf("Engine:              %s\n", source.Engine)
 	fmt.Printf("Host:                %s\n", source.Host)
 	fmt.Printf("Port:                %d\n", source.Port)
 	fmt.Printf("Status:              %s\n", getStatusIcon(source.Status))
-	
+
 	if source.DBName != nil {
 		fmt.Printf("Database Name:       %s\n", *source.DBName)
 	} else {
 		fmt.Printf("Database Name:       Not specified\n")
 	}
-	
+
 	if source.Username != nil {
 		fmt.Printf("Username:            %s\n", *source.Username)
 	} else {
 		fmt.Printf("Username:            Not configured\n")
 	}
-	
+
 	if source.Password != nil {
 		fmt.Printf("Password:            %s\n", "[CONFIGURED]")
 	} else {
 		fmt.Printf("Password:            Not configured\n")
 	}
-	
+
 	if source.ConfigJSON != nil && *source.ConfigJSON != "" {
 		fmt.Printf("Configuration:       %s\n", "[CUSTOM CONFIG]")
 	}
-	
+
 	fmt.Printf("Team ID:             %d\n", source.TeamID)
 	fmt.Printf("Workspace ID:        %d\n", source.WorkspaceID)
-	
+
 	if source.Tags != nil && *source.Tags != "" {
 		fmt.Printf("Tags:                %s\n", *source.Tags)
 	}
-	
+
 	fmt.Printf("Created:             %s\n", source.CreatedAt.Format("2006-01-02 15:04:05"))
 	fmt.Printf("Updated:             %s\n", source.UpdatedAt.Format("2006-01-02 15:04:05"))
 	fmt.Println()

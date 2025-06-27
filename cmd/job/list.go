@@ -28,32 +28,32 @@ func init() {
 
 func runList(cmd *cobra.Command, args []string) {
 	logger.Debug("Starting backup jobs list")
-	
+
 	// Create API client
 	client, err := api.NewClient()
 	if err != nil {
 		logger.Errorf("Failed to create API client: %v", err)
 		return
 	}
-	
+
 	// Get backup jobs
 	jobs, err := client.GetBackupJobs()
 	if err != nil {
 		logger.Errorf("Failed to retrieve backup jobs: %v", err)
 		return
 	}
-	
+
 	if len(jobs) == 0 {
 		logger.Info("No backup jobs found")
 		return
 	}
-	
+
 	// Show table view if requested
 	if tableView {
 		displayJobsTable(jobs)
 		return
 	}
-	
+
 	// Interactive selection
 	if err := selectAndDisplayJob(client, jobs); err != nil {
 		logger.Debugf("Interactive selection failed: %v", err)
@@ -67,7 +67,7 @@ func runList(cmd *cobra.Command, args []string) {
 func displayJobsTable(jobs []api.BackupJob) {
 	fmt.Printf("%-5s %-25s %-10s %-15s %-15s %-20s\n", "ID", "NAME", "STATUS", "SCHEDULE", "MODE", "CREATED")
 	fmt.Println(strings.Repeat("-", 90))
-	
+
 	for _, job := range jobs {
 		// Truncate long names for display
 		id := fmt.Sprintf("%d", job.ID)
@@ -76,11 +76,11 @@ func displayJobsTable(jobs []api.BackupJob) {
 		schedule := truncateString(job.Schedule, 15)
 		mode := truncateString(job.ExecutionMode, 15)
 		created := job.CreatedAt.Format("2006-01-02 15:04")
-		
-		fmt.Printf("%-5s %-25s %-10s %-15s %-15s %-20s\n", 
+
+		fmt.Printf("%-5s %-25s %-10s %-15s %-15s %-20s\n",
 			id, name, status, schedule, mode, created)
 	}
-	
+
 	logger.Infof("Found %d backup jobs", len(jobs))
 }
 
@@ -96,11 +96,11 @@ func selectAndDisplayJob(client *api.Client, jobs []api.BackupJob) error {
 		} else if job.Status != "active" {
 			status = "🔴"
 		}
-		
+
 		display := fmt.Sprintf("%s %s (%s) - %s", status, job.Name, job.Status, job.Schedule)
 		options = append(options, huh.NewOption(display, job.ID))
 	}
-	
+
 	// Add option to view all in table
 	options = append(options, huh.NewOption("📋 View all jobs in table format", -1))
 
@@ -141,30 +141,30 @@ func displayJobDetails(job *api.BackupJob) {
 	fmt.Println()
 	fmt.Printf("📋 Backup Job Details\n")
 	fmt.Println(strings.Repeat("=", 50))
-	
+
 	fmt.Printf("ID:                  %d\n", job.ID)
 	fmt.Printf("Name:                %s\n", job.Name)
 	fmt.Printf("Status:              %s\n", getStatusIcon(job.Status))
 	fmt.Printf("Schedule:            %s\n", job.Schedule)
 	fmt.Printf("Execution Mode:      %s\n", job.ExecutionMode)
-	
+
 	if job.ServerID != nil {
 		fmt.Printf("Server ID:           %d\n", *job.ServerID)
 	} else {
 		fmt.Printf("Server ID:           Direct API\n")
 	}
-	
+
 	fmt.Printf("Database Source ID:  %d\n", job.DatabaseSourceID)
 	fmt.Printf("Storage Dest ID:     %d\n", job.StorageDestinationID)
 	fmt.Printf("Retention Days:      %d\n", job.RetentionDays)
 	fmt.Printf("Compression:         %s\n", job.Compression)
 	fmt.Printf("Team ID:             %d\n", job.TeamID)
 	fmt.Printf("Workspace ID:        %d\n", job.WorkspaceID)
-	
+
 	if job.Tags != nil && *job.Tags != "" {
 		fmt.Printf("Tags:                %s\n", *job.Tags)
 	}
-	
+
 	fmt.Printf("Created:             %s\n", job.CreatedAt.Format("2006-01-02 15:04:05"))
 	fmt.Printf("Updated:             %s\n", job.UpdatedAt.Format("2006-01-02 15:04:05"))
 	fmt.Println()

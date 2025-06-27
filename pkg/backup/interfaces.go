@@ -36,7 +36,7 @@ type BackupExecutor struct {
 func (be *BackupExecutor) Execute(ctx context.Context) error {
 	// Generate filename
 	filename := generateBackupFilename(be.Config, be.Dumper)
-	
+
 	fullPath := filename
 	if be.Config.PathPrefix != "" {
 		fullPath = be.Config.PathPrefix + "/" + filename

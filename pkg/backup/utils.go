@@ -9,7 +9,7 @@ import (
 
 func generateBackupFilename(config BackupConfig, dumper DatabaseDumper) string {
 	timestamp := time.Now().Format("20060102_150405")
-	
+
 	dbName := config.DatabaseName
 	if dbName == "" {
 		dbName = "default"
