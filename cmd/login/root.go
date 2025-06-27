@@ -33,7 +33,7 @@ var LoginCmd = &cobra.Command{
 func runLogin(cmd *cobra.Command, args []string) {
 	// Load configuration from environment variables with defaults
 	const callbackPort = "9097"
-	loginBaseURL := getEnvWithDefault("LOGIN_BASE_URL", "https://auth.dbbackup.io")
+	loginBaseURL := getEnvWithDefault("LOGIN_BASE_URL", "auth.dbbackup.io")
 
 	callbackURL := "http://localhost:" + callbackPort
 	loginURL := loginBaseURL + "/login?cli-login=true&cli-login-redirect=" + callbackURL

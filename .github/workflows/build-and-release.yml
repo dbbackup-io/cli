@@ -33,11 +33,11 @@ jobs:
     permissions:
       contents: read
       packages: write
-    
+
     outputs:
       version: ${{ steps.get-version.outputs.version }}
       image-digest: ${{ steps.build.outputs.digest }}
-    
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -81,7 +81,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: .
-          platforms: linux/amd64,linux/arm64,linux/arm/v7
+          platforms: linux/amd64,linux/arm64
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
@@ -199,7 +199,6 @@ jobs:
           echo "### Multi-arch support:" >> CHANGELOG.md
           echo "- linux/amd64" >> CHANGELOG.md
           echo "- linux/arm64" >> CHANGELOG.md
-          echo "- linux/arm/v7" >> CHANGELOG.md
           echo "" >> CHANGELOG.md
           echo "## Installation" >> CHANGELOG.md
           echo "" >> CHANGELOG.md
@@ -253,5 +252,5 @@ jobs:
           echo "- \`ghcr.io/${{ github.repository }}:latest\`" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "### 🏗️ Supported Architectures:" >> $GITHUB_STEP_SUMMARY
-          echo "- linux/amd64, linux/arm64, linux/arm/v7" >> $GITHUB_STEP_SUMMARY
+          echo "- linux/amd64, linux/arm64" >> $GITHUB_STEP_SUMMARY
           echo "- Binary releases for Linux, macOS, Windows (amd64/arm64)" >> $GITHUB_STEP_SUMMARY
